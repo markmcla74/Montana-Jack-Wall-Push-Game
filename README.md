@@ -1,1 +1,1 @@
-The goal of the video game is to "crush" your opponent. There is a wall separating two players. Each player may choose, rest, push, or super push. When the wall "crushes" one of the players, the other player wins. I hope you enjoy this game!
+The goal of the video game is to "crush" your opponent. There is a wall separating two players. Each player may choose, rest, push, or super push. When the wall "crushes" one of the players, the other player wins. I hope you enjoy this game! https://markmcla74.github.io/Montana-Jack-Wall-Push-Game/
