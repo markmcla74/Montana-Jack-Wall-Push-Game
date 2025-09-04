@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Montana Jack Wall Push</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <div id="rules">
+  <h1> Montana Jack Wall Push Game </h1>
+  <h2>Game Rules</h2>
+  <div class="rules-columns">
+    <!-- Left column: Player Controls -->
+    <div class="rules-column" id="controls-box">
+      <h3>Player Controls</h3>
+      <ul>
+        <li>Player 1: <strong>A</strong> = Rest, <strong>S</strong> = Push, <strong>D</strong> = Super Push</li>
+        <li>Player 2: <strong>J</strong> = Rest, <strong>K</strong> = Push, <strong>L</strong> = Super Push</li>
+      </ul>
+    </div>
+
+    <!-- Right column: Energy Rules -->
+    <div class="rules-column" id="energy-box">
+      <h3>Energy System</h3>
+      <ul>
+        <li>Start: <strong>3 energy units</strong></li>
+        <li>Rest: +4 energy</li>
+        <li>Push: –1 energy, moves wall 1 unit</li>
+        <li>Super Push: –3 energy, moves wall 2 units</li>
+      </ul>
+    </div>
+  </div>
+</div>
+ <!-- Initial screen overlay -->
+<div id="startOverlay">
+  <div id="startOval">
+    <h2>Start Game <br> Display Player Energy Units?</h2>
+    <button id="showEnergyBtn">Show Energy</button>
+    <button id="hideEnergyBtn">Hide Energy</button>
+  </div>
+</div>
+
+  <canvas id="gameCanvas"></canvas>
+  <p id="status"></p>
+  <script src="index.js"></script>
+</body>
+</html>
