@@ -601,76 +601,9 @@ function drawWinnerPose5(x, y, playerID) {
       victoryLossScene2 = null;
       drawDefault(wallPos, canvas.height/2);
     }
-
-    function resolveTurn() {
-      if (gameOver) return;
-      // Player 1 action
-      if (leftChoice === "rest") {
-        player1Energy += 4;
-        playRestSound();
-      } else if (leftChoice === "push" && player1Energy == 0) {
-        leftChoice = "doNothing";
-        playDoNothingSound()
-      } else if (leftChoice === "super" && player1Energy == 2) {
-        leftChoice = "doNothing";
-        playDoNothingSound()
-      } else if (leftChoice === "super" && player1Energy == 1) {
-        leftChoice = "doNothing";
-        playDoNothingSound()
-      } else if (leftChoice === "super" && player1Energy == 0) {
-        leftChoice = "doNothing";
-        playDoNothingSound()
-      } else if (leftChoice === "push" && player1Energy >= 1) {
-        player1Energy -= 1;
-        playPushSound();
-        if ((wallPos + wallPushDistance) < (canvas.width - crushDistance)){
-          wallPos += wallPushDistance;
-        } else wallPos = canvas.width - 0.9*crushDistance; //wall crushes loser
-        
-      } else if (leftChoice === "super" && player1Energy >= 3) {
-        player1Energy -= 3;
-        playHadouken();
-         if ((wallPos + 2*wallPushDistance)< (canvas.width - crushDistance)){
-          wallPos += 2*wallPushDistance;
-         } else wallPos = canvas.width - 0.9*crushDistance; //wall crushes loser
-         
-      }
-
-      // Player 2 action
-      //console.log(player2Energy);
-      if (rightChoice === "rest") {
-        player2Energy += 4;
-        playRestSound();
-      } else if (rightChoice === "push" && player2Energy == 0) {
-        rightChoice = "doNothing";
-        playDoNothingSound()
-      } else if (rightChoice === "super" && player2Energy == 2) {
-        rightChoice = "doNothing";
-        playDoNothingSound()
-      } else if (rightChoice === "super" && player2Energy == 1) {
-        rightChoice = "doNothing";
-        playDoNothingSound()
-      } else if (rightChoice === "super" && player2Energy == 0) {
-        rightChoice = "doNothing";
-        playDoNothingSound()
-      } else if (rightChoice === "push" && player2Energy >= 1) {
-        player2Energy -= 1;
-         playPushSound();
-        if ((wallPos - wallPushDistance) > crushDistance){
-          wallPos -= wallPushDistance;
-        } else wallPos = 0.9*crushDistance;
     
-      } else if (rightChoice === "super" && player2Energy >= 3) {
-        player2Energy -= 3;
-        playHadouken();
-         if ((wallPos - 2*wallPushDistance) > crushDistance){
-           wallPos -= 2*wallPushDistance;
-         } else wallPos = 0.9*crushDistance;
-      }
-
-     
-
-      // Check win condition
+    function checkWinCondition(wallPos) {
+        // Check win condition
       
       if (wallPos <= crushDistance) {
         document.getElementById("status").innerText = "Player 1 is crushed! Player 2 wins!";
@@ -713,6 +646,303 @@ function drawWinnerPose5(x, y, playerID) {
         stopThinkingSound();
         playCrushedAndVictory();
         
+      } 
+    
+    }
+
+    function resolveTurn() {
+      if (gameOver) return;
+      //There are 5 different inputs for each player. This gives 25 different outputs
+      //The 5 inputs are: rest, push & E >=1, push & E=0, super push and E>=3, super push and E<3
+      //Imagine a 2D grid with a column representing P1, and a row representing P2
+      //And the inside of the grid is filled with the appropriate actions to take
+      //Here is the brute force way of listing all 25 possibilites and outcomes.
+      
+      //Player1 is leftChoice = "column", Player2 is rightChoice = "row"
+      //We'll fix Player2 and loop through Player1 choices. 
+      //Then increment Player2 choice and loop through Player1 choices again.
+      //Repeat until all 25 choices described.
+      
+      //"column 1 choices"
+      if (leftChoice === "rest" && rightChoice === "rest"){
+        playRestSound();
+        playRestSound();
+        player1Energy += 4;
+        player2Energy += 4;
+        checkWinCondition(wallPos);
+        return;
+      } 
+      
+      if ((leftChoice === "push" && player1Energy >=1) && (rightChoice === "rest")){
+        playPushSound();
+        playRestSound();
+        player1Energy -= 1;
+        player2Energy += 4;
+        if ((wallPos + wallPushDistance) < (canvas.width - crushDistance)){
+          wallPos += wallPushDistance;
+        } else wallPos = canvas.width - 0.9*crushDistance; //wall crushes loser
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+       if ((leftChoice === "push" && player1Energy == 0) && (rightChoice === "rest")){
+        playDoNothingSound();
+        playRestSound();
+        leftChoice = "doNothing";
+        player2Energy += 4;
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+       if ((leftChoice === "super" && player1Energy >= 3) && (rightChoice === "rest")){
+        playHadouken();
+        playRestSound();
+        player1Energy -= 3;
+        player2Energy += 4;
+        if ((wallPos + 2*wallPushDistance)< (canvas.width - crushDistance)){
+          wallPos += 2*wallPushDistance;
+         } else wallPos = canvas.width - 0.9*crushDistance; //wall crushes loser
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+      if ((leftChoice === "super" && player1Energy < 3) && (rightChoice === "rest")){
+        playDoNothingSound();
+        playRestSound();
+        player1Energy = 0;
+        player2Energy += 4;
+        leftChoice = "doNothing";
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+      //"column 2 choices"
+       if ((leftChoice === "rest") && (rightChoice === "push" && player2Energy >= 1)){
+        playRestSound();
+        playPushSound();
+        player1Energy += 4;
+        player2Energy -= 1;
+        if ((wallPos - wallPushDistance) > crushDistance){
+          wallPos -= wallPushDistance;
+        } else wallPos = 0.9*crushDistance; //wall crushes loser
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+      if ((leftChoice === "push" && player1Energy >= 1) && (rightChoice === "push" && player2Energy >= 1)){
+        playPushSound();
+        playPushSound();
+        player1Energy -= 1;
+        player2Energy -= 1;
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+      if ((leftChoice === "push" && player1Energy == 0) && (rightChoice === "push" && player2Energy >= 1)){
+        playDoNothingSound();
+        playPushSound();
+        player2Energy -= 1;
+        leftChoice = "doNothing";
+        if ((wallPos - wallPushDistance) > crushDistance){
+          wallPos -= wallPushDistance;
+        } else wallPos = 0.9*crushDistance; //wall crushes loser
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+      if ((leftChoice === "super" && player1Energy >= 3) && (rightChoice === "push" && player2Energy >= 1)){
+        playHadouken();
+        playPushSound();
+        player1Energy -=3;
+        player2Energy -= 1;
+        if ((wallPos + wallPushDistance) < (canvas.width - crushDistance)){
+          wallPos += wallPushDistance;
+        } else wallPos = canvas.width - 0.9*crushDistance; //wall crushes loser
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+      if ((leftChoice === "super" && player1Energy < 3) && (rightChoice === "push" && player2Energy >= 1)){
+        playDoNothingSound();
+        playPushSound();
+        player1Energy = 0;
+        player2Energy -= 1;
+        leftChoice = "doNothing";
+        if ((wallPos - wallPushDistance) > crushDistance){
+          wallPos -= wallPushDistance;
+        } else wallPos = 0.9*crushDistance; //wall crushes loser
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+      //"column 3 choices"
+       if ((leftChoice === "rest") && (rightChoice === "push" && player2Energy == 0)){
+        playRestSound();
+        playDoNothingSound();
+        rightChoice = "doNothing";
+        player1Energy += 4;
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+       if ((leftChoice === "push" && player1Energy >= 1) && (rightChoice === "push" && player2Energy == 0)){
+        playPushSound();
+        playDoNothingSound();
+        player1Energy -= 1;
+        rightChoice = "doNothing";
+         if ((wallPos + wallPushDistance) < (canvas.width - crushDistance)){
+          wallPos += wallPushDistance;
+        } else wallPos = canvas.width - 0.9*crushDistance; //wall crushes loser
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+      if ((leftChoice === "push" && player1Energy == 0) && (rightChoice === "push" && player2Energy == 0)){
+        playDoNothingSound();
+        playDoNothingSound();
+        rightChoice = "doNothing";
+        leftChoice = "doNothing";
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+       if ((leftChoice === "super" && player1Energy >= 3) && (rightChoice === "push" && player2Energy == 0)){
+        playHadouken();
+        playDoNothingSound();
+        rightChoice = "doNothing";
+        player1Energy -= 3;
+        if ((wallPos + 2*wallPushDistance)< (canvas.width - crushDistance)){
+          wallPos += 2*wallPushDistance;
+         } else wallPos = canvas.width - 0.9*crushDistance; //wall crushes loser 
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+      if ((leftChoice === "super" && player1Energy < 3) && (rightChoice === "push" && player2Energy == 0)){
+        playDoNothingSound();
+        playDoNothingSound();
+        rightChoice = "doNothing";
+        leftChoice = "doNothing";
+        player1Energy = 0;
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+      //"column 4 choices"
+       if ((leftChoice === "rest") && (rightChoice === "super" && player2Energy >= 3)){
+        playRestSound();
+        playHadouken();
+        player1Energy += 4;
+        player2Energy -= 3;
+         if ((wallPos - 2*wallPushDistance) > crushDistance){
+           wallPos -= 2*wallPushDistance;
+         } else wallPos = 0.9*crushDistance;
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+      if ((leftChoice === "push" && player1Energy >= 1) && (rightChoice === "super" && player2Energy >= 3)){
+        playPushSound();
+        playHadouken();
+        player1Energy += 4;
+        player2Energy -= 3;
+        if ((wallPos - wallPushDistance) > crushDistance){
+          wallPos -= wallPushDistance;
+        } else wallPos = 0.9*crushDistance;
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+       if ((leftChoice === "push" && player1Energy == 0) && (rightChoice === "super" && player2Energy >= 3)){
+        playDoNothingSound();
+        playHadouken();
+        leftChoice = "doNothing";
+        player2Energy -= 3;
+        if ((wallPos - 2*wallPushDistance) > crushDistance){
+           wallPos -= 2*wallPushDistance;
+         } else wallPos = 0.9*crushDistance;
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+       if ((leftChoice === "super" && player1Energy >= 3) && (rightChoice === "super" && player2Energy >= 3)){
+        playHadouken();
+        playHadouken();
+        player1Energy -= 3;
+        player2Energy -= 3;
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+        if ((leftChoice === "super" && player1Energy < 3) && (rightChoice === "super" && player2Energy >= 3)){
+        playDoNothingSound();
+        playHadouken();
+        leftChoice = "doNothing";
+        player1Energy = 0;
+        player2Energy -= 3;
+        if ((wallPos - 2*wallPushDistance) > crushDistance){
+           wallPos -= 2*wallPushDistance;
+         } else wallPos = 0.9*crushDistance;
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+      //"column 5 choices"
+       if ((leftChoice === "rest") && (rightChoice === "super" && player2Energy < 3)){
+        playRestSound();
+        playDoNothingSound();
+        rightChoice = "doNothing";
+        player1Energy += 4;
+        player2Energy = 0;
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+       if ((leftChoice === "push" && player1Energy >= 1) && (rightChoice === "super" && player2Energy < 3)){
+        playPushSound();
+        playDoNothingSound();
+        rightChoice = "doNothing";
+        player1Energy -= 1;
+        player2Energy = 0;
+        if ((wallPos + wallPushDistance) < (canvas.width - crushDistance)){
+          wallPos += wallPushDistance;
+        } else wallPos = canvas.width - 0.9*crushDistance; //wall crushes loser
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+       if ((leftChoice === "push" && player1Energy == 0) && (rightChoice === "super" && player2Energy < 3)){
+        playDoNothingSound();
+        playDoNothingSound();
+        leftChoice = "doNothing";
+        rightChoice = "doNothing";
+        player2Energy = 0;
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+       if ((leftChoice === "super" && player1Energy >= 3) && (rightChoice === "super" && player2Energy < 3)){
+        playHadouken();
+        playDoNothingSound();
+        rightChoice = "doNothing";
+        player1Energy -= 3;
+        player2Energy = 0;
+         if ((wallPos + 2*wallPushDistance)< (canvas.width - crushDistance)){
+          wallPos += 2*wallPushDistance;
+         } else wallPos = canvas.width - 0.9*crushDistance; //wall crushes loser
+        checkWinCondition(wallPos);
+        return;
+      }
+      
+       if ((leftChoice === "super" && player1Energy < 3) && (rightChoice === "super" && player2Energy < 3)){
+        playDoNothingSound();
+        playDoNothingSound();
+        leftChoice = "doNothing";
+        rightChoice = "doNothing";
+        player1Energy = 0;
+        player2Energy = 0;
+        checkWinCondition(wallPos);
+        return;
       }
       
     }
