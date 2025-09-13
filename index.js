@@ -39,7 +39,7 @@
   wallPos = canvas.width /2; // Middle starting point
   wallWidth = 0.01*canvas.width;
   wallOffset = 5.5*wallWidth; //distance stick figures from wall
-  wallPushDistance = 7*wallWidth;
+  wallPushDistance = 12*wallWidth;
   crushDistance = 40*scale; //width of legs of collapsed stick figure (loser)
 
  // drawDefault(); 
