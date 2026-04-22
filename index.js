@@ -1228,3 +1228,11 @@ function startGame(withEnergy) {
      // Run once on load
      resizeCanvas();
      
+     // Register the Service Worker for PWA functionality
+     if ('serviceWorker' in navigator) {
+       window.addEventListener('load', () => {
+         navigator.serviceWorker.register('./sw.js')
+         .then(reg => console.log('Service Worker registered successfully!', reg))
+         .catch(err => console.log('Service Worker registration failed:', err));
+       });
+     }
