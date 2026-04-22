@@ -133,17 +133,23 @@ justify-content: center;
 align-items: center;
 z-index: 100;
 }
-
 #menuContainer {
-width: 90%;
+width: 75%; /* Your suggested change - looks much better in landscape */
 max-width: 600px;
-/* Changed hex #333 to rgba to allow transparency */
 background: rgba(51, 51, 51, 0.85);
-padding: 20px;
+
+/* TIGHTENED FOR MOBILE LANDSCAPE */
+padding: 10px 20px; /* Reduced top/bottom padding from 20px to 10px */
+margin: auto;       /* Ensures it stays centered */
+
 border-radius: 15px;
 border: 3px solid #8fbc8f;
 color: white;
 box-shadow: 0 0 20px rgba(0,0,0,0.5);
+
+/* SAFETY MEASURE */
+max-height: 90vh;   /* Keeps it from ever being taller than the screen */
+overflow-y: auto;   /* Adds a scrollbar if the phone is tiny */
 }
 .menu-selection {
   display: flex;
