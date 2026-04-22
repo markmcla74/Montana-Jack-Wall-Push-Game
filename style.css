@@ -134,7 +134,7 @@ align-items: center;
 z-index: 100;
 }
 #menuContainer {
-width: 60%; /* Your suggested change - looks much better in landscape */
+width: 80%; /* Your suggested change - looks much better in landscape */
 max-width: 600px;
 background: rgba(51, 51, 51, 0.85);
 
