@@ -1133,26 +1133,42 @@ function stopThinkingSound() {
     thinkingInterval = null;
   }
 }
-
 // Start game function
-function startGame(withEnergy) {
+async function startGame(withEnergy) {
   showEnergy = withEnergy;
 
-  // Hide overlay
+  // 1. FORCED LANDSCAPE & FULLSCREEN
+  try {
+    const docElm = document.documentElement;
+
+    // Request Fullscreen first (Required by many browsers to lock orientation)
+    if (docElm.requestFullscreen) {
+      await docElm.requestFullscreen();
+    } else if (docElm.webkitRequestFullscreen) {
+      await docElm.webkitRequestFullscreen();
+    }
+
+    // Lock orientation to landscape
+    if (screen.orientation && screen.orientation.lock) {
+      await screen.orientation.lock("landscape");
+    }
+  } catch (err) {
+    console.log("Orientation lock or Fullscreen failed. This is normal on desktop or if the user hasn't interacted enough yet.", err);
+  }
+
+  // 2. HIDE OVERLAY
   document.getElementById("startOverlay").style.display = "none";
 
-  // Create/resume AudioContext
+  // 3. AUDIO CONTEXT (Create/Resume)
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
   if (audioCtx.state === "suspended") {
-    audioCtx.resume();
+    await audioCtx.resume();
   }
 
-  // Start thinking music
+  // 4. START GAME LOGIC
   startThinkingSound();
-
-  // Initialize game
   initGame();
 }
 
