@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="screen-orientation" content="landscape">
   <link rel="manifest" href="manifest.json">
   <title>Montana Jack Wall Push</title>
@@ -16,7 +16,7 @@
 
 
 
-  <div class="rules-content">
+  <div class="overlay-content">
       <h1>Montana Jack Wall Push</h1>
       <div class="selection-group">
         <p>Players:</p>
@@ -41,17 +41,30 @@
 
   </div>
 </div>
-
+<div id="gameContainer">
   <canvas id="gameCanvas"></canvas>
-   <div id="rules">
-   <h3>Energy System Rules</h3>
-   <ul>
-     <li><strong>Start:</strong> 3 energy units</li>
-     <li><strong>Rest:</strong> +4 energy</li>
-     <li><strong>Push:</strong> –1 energy</li>
-     <li><strong>Super Push:</strong> –3 energy</li>
-   </ul>
+
+  <div id="gameDashboard">
+    <div id="controlsP1" class="player-controls">
+      <button class="game-btn p1-btn">PUSH (-1)</button>
+      <button class="game-btn p1-btn">SUPER PUSH (-3)</button>
+      <button class="game-btn p1-btn">REST (+4)</button>
+    </div>
+
+    <div id="centerUI">
+       <p id="status"></p>
+    </div>
+
+    <div id="controlsP2" class="player-controls">
+      <button class="game-btn p2-btn">PUSH (-1)</button>
+      <button class="game-btn p2-btn">SUPER PUSH (-3)</button>
+      <button class="game-btn p2-btn">REST (+4)</button>
+    </div>
+  </div>
 </div>
+
+
+
   <p id="status"></p>
   <script src="index.js"></script>
 </body>

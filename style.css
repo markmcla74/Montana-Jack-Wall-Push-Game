@@ -1,3 +1,11 @@
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden; /* This is the "kill switch" for scrolling */
+      position: fixed;  /* Extra insurance for iOS Safari */
+    }
     canvas {
       background: black;
       display: block;
@@ -23,14 +31,7 @@
     button:hover {
       background: #666;
     }
-    #gameCanvas {
-  width: 95%;       /* canvas stretches to fit container width */
-  /*max-width: 900px; */  /* optional: prevent it from getting too wide */
-  height: auto;      /* keeps aspect ratio */
-  border: 2px solid black;
-  display: block;
-  margin: 0 auto;    /* centers it */
-}
+
    
    #status {
    position: absolute;
@@ -44,88 +45,10 @@
    text-align: center;
    pointer-events: none; /* Allows clicks to pass through if needed */
    }
-    #rules {
-    max-width: 93%;
-    margin: 15px auto;
-    padding: 15px;
-    background: rgba(143, 188, 143, 0.6);
-    border: 2px solid #333;
-    border-radius: 10px;
-    text-align: center;
-    }
-    #rules h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #8b008b; /* Using your dark magenta for the main title */
-    font-size: 16px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    }
-#rules h1 {
-  text-align: center;
-  font-size: 26px;
-  margin-bottom: 10px;
-  color: #000;
-}
 
-#rules h2 {
-  text-align: center;
-  font-size: 22px;
-  margin-bottom: 10px;
-  color: #8b008b; /*dark magenta */
-  
-}
-/* Assuming your header is an h2 or a specific class */
-.rules-header {
-  font-size: 0.9rem; /* Much smaller than the main title */
-  margin-bottom: 4px;
-  color: #8fbc8f; /* Keep the color so it stands out */
-  text-transform: uppercase;
-}
 
-.rules-content {
-  background: rgba(224, 224, 224, 0.8);
-  padding: 10px;
-  border-radius: 8px;
-  display: inline-block; /* Wraps tightly around the list */
-  text-align: center;     /* Keeps the list items tidy */
-}
-.rules-columns {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px; /* space between columns */
-}
 
-.rules-column {
-  /* Center the single column */
-  margin: 0 auto;
-  max-width: 400px;
-  background: rgba(224, 224, 224, 0.4);
-  padding: 15px;
-  border-radius: 8px;
-  text-align: left; /* Keep the list aligned, but the box centered */
-}
 
-.rules-column h3 {
-  text-align: center;
-  margin-top: 0;
-  color: #00bfff;
-}
-
-#rules ul {
-list-style-type: none;
-padding: 0;
-margin: 0;
-font-size: 16px;
-color: #000;
-}
-#rules li {
-margin-bottom: 6px;
-}
-
-#rules li strong {
-color: #d32f2f;
-}
 #startOverlay {
 position: fixed;
 top: 0;
@@ -141,10 +64,14 @@ justify-content: center;
 align-items: center;
 z-index: 100;
 }
+
+
+
 #menuContainer {
 width: 85%; /* Your suggested change - looks much better in landscape */
 max-width: 350px;
-background: rgba(51, 51, 51, 0.85);
+/*background: rgba(51, 51, 51, 0.85);*/
+background: rgba(143, 188, 143, 0.8);
 
 /* TIGHTENED FOR MOBILE LANDSCAPE */
 padding: 10px 20px; /* Reduced top/bottom padding from 20px to 10px */
@@ -190,6 +117,15 @@ letter-spacing: 1px;
   border-color: #ff00ff;
 }
 
+.overlay-content {
+
+  /*background: rgba(224, 224, 224, 0.9);*/
+  padding: 10px;
+  border-radius: 8px;
+  display: inline-block; /* Wraps tightly around the list */
+  text-align: center;     /* Keeps the list items tidy */
+}
+
 #startGameBtn {
 background-color: #e74c3c; /* A solid, vibrant red */
 color: white;              /* Keep the text white for high contrast */
@@ -212,7 +148,92 @@ box-shadow: none;
 transform: translateY(4px);
 }
 
-/* Hide game elements only in Portrait mode */
+
+
+#rules {
+flex: 1.5; /* Gives the middle section slightly more room */
+font-size: 11px;
+color: white;
+background: none; /* Remove previous background */
+border: none;     /* Remove previous border */
+text-align: center;
+}
+
+#rules h3 { font-size: 14px; margin-bottom: 5px; color: #8b008b; }
+#rules ul { list-style: none; padding: 0; }
+
+
+
+/* Red for P1, Blue for P2 */
+#controlsP1 .game-btn { border-color: #ff4d4d; }
+#controlsP2 .game-btn { border-color: #4d94ff; }
+
+/* Prevent the whole page from scrolling */
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+#gameContainer {
+display: flex;
+flex-direction: column;
+height: 100vh; /* Fill the whole screen */
+}
+
+#gameCanvas {
+flex: 6; /* Takes up 60% of vertical space */
+width: 100%;
+background: #111;
+border-bottom: 2px solid #444;
+}
+
+#gameDashboard {
+flex: 4; /* Takes up 40% of vertical space */
+display: none; /* Hidden until Start is clicked */
+background: #222;
+padding: 10px;
+box-sizing: border-box;
+
+/* Flexbox Row for P1 - Center - P2 */
+display: flex;
+justify-content: space-between;
+align-items: stretch; /* Makes buttons fill the vertical space */
+gap: 15px;
+}
+
+.player-controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  flex: 1;
+}
+
+#centerUI {
+flex: 1;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.game-btn {
+  flex: 1; /* Each button takes equal height in the stack */
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 3px solid;
+  color: white;
+  background: #333;
+}
+
+/* Color Coding */
+.p1-btn { border-color: #ff4d4d; }
+.p2-btn { border-color: #4d94ff; }
+
+
+
 @media (orientation: portrait) {
   #gameCanvas, #status {
   display: none !important;
