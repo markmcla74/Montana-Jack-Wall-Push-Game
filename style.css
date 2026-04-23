@@ -45,7 +45,7 @@
    pointer-events: none; /* Allows clicks to pass through if needed */
    }
     #rules {
-    max-width: 90%;
+    max-width: 93%;
     margin: 15px auto;
     padding: 15px;
     background: rgba(143, 188, 143, 0.6);
@@ -210,4 +210,17 @@ box-shadow: 0 4px 0 #c0392b;
 #startGameBtn:active {
 box-shadow: none;
 transform: translateY(4px);
+}
+
+/* Target only Portrait mode */
+@media (orientation: portrait) {
+  #startOverlay {
+  align-items: flex-start; /* Moves menuContainer to the top */
+  padding-top: 20px;       /* Keeps it from touching the very top edge */
+  }
+
+  #menuContainer {
+  width: 90%;             /* Allow it to be slightly wider in portrait */
+  margin-top: 10px;       /* Extra breathing room */
+  }
 }
