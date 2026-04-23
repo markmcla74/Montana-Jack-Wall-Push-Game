@@ -84,11 +84,11 @@
 }
 
 .rules-content {
-  background: rgba(224, 224, 224, 0.4);
+  background: rgba(224, 224, 224, 0.8);
   padding: 10px;
   border-radius: 8px;
   display: inline-block; /* Wraps tightly around the list */
-  text-align: left;     /* Keeps the list items tidy */
+  text-align: center;     /* Keeps the list items tidy */
 }
 .rules-columns {
   display: flex;
@@ -143,7 +143,7 @@ z-index: 100;
 }
 #menuContainer {
 width: 85%; /* Your suggested change - looks much better in landscape */
-max-width: 600px;
+max-width: 350px;
 background: rgba(51, 51, 51, 0.85);
 
 /* TIGHTENED FOR MOBILE LANDSCAPE */
@@ -152,7 +152,7 @@ margin: auto;       /* Ensures it stays centered */
 
 border-radius: 15px;
 border: 3px solid #8fbc8f;
-color: white;
+color: black;
 box-shadow: 0 0 20px rgba(0,0,0,0.5);
 
 /* SAFETY MEASURE */
@@ -161,7 +161,7 @@ overflow-y: auto;   /* Adds a scrollbar if the phone is tiny */
 }
 
 #menuContainer h1 {
-font-size: 1.2rem; /* Reduced from default size */
+font-size: 1.3rem; /* Reduced from default size */
 margin: 5px 0;    /* Tight vertical spacing */
 letter-spacing: 1px;
 }
@@ -175,6 +175,7 @@ letter-spacing: 1px;
 .selection-group p {
   margin-bottom: 5px;
   font-weight: bold;
+  font-size:1.1rem;
 }
 
 .toggle-btn {
