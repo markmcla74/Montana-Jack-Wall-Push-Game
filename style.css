@@ -75,6 +75,14 @@
   color: #8b008b; /*dark magenta */
   
 }
+/* Assuming your header is an h2 or a specific class */
+.rules-header {
+  font-size: 0.9rem; /* Much smaller than the main title */
+  margin-bottom: 4px;
+  color: #8fbc8f; /* Keep the color so it stands out */
+  text-transform: uppercase;
+}
+
 .rules-content {
   background: rgba(224, 224, 224, 0.4);
   padding: 10px;
@@ -151,6 +159,13 @@ box-shadow: 0 0 20px rgba(0,0,0,0.5);
 max-height: 90vh;   /* Keeps it from ever being taller than the screen */
 overflow-y: auto;   /* Adds a scrollbar if the phone is tiny */
 }
+
+#menuContainer h1 {
+font-size: 1.2rem; /* Reduced from default size */
+margin: 5px 0;    /* Tight vertical spacing */
+letter-spacing: 1px;
+}
+
 .menu-selection {
   display: flex;
   justify-content: space-around;
@@ -175,10 +190,23 @@ overflow-y: auto;   /* Adds a scrollbar if the phone is tiny */
 }
 
 #startGameBtn {
-background: #d32f2f;
-font-size: 24px;
-padding: 15px 30px;
-width: 100%;
-font-weight: bold;
-margin-top: 10px;
+background-color: #e74c3c; /* A solid, vibrant red */
+color: white;              /* Keep the text white for high contrast */
+border: none;              /* Removes the default browser gray border */
+
+/* Re-applying our size shrinks from earlier */
+padding: 8px 20px;
+font-size: 1rem;
+font-weight: bold;         /* Makes the "START" pop */
+border-radius: 8px;
+cursor: pointer;
+
+/* Subtle shadow for a "clickable" feel */
+box-shadow: 0 4px 0 #c0392b;
+}
+
+/* Optional: Make it look "pushed" when clicked */
+#startGameBtn:active {
+box-shadow: none;
+transform: translateY(4px);
 }
