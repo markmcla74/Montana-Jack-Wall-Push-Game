@@ -187,12 +187,13 @@ overflow: hidden;
 }
 
 #gameCanvas {
-flex: 55; /* Takes 55% of the height */
-width: 100%;
-display: block;
-background: #111;
+border: none;       /* Removes any thin white lines */
+outline: none;      /* Removes the 'focus' ring when you tap it */
 border-bottom: 2px solid #444;
-margin: 0; /* Remove any margin that was pushing the dashboard down */
+padding: 0;
+margin: 0;
+display: block;     /* Prevents 'inline' spacing at the bottom */
+box-sizing: border-box;
 }
 
 #gameDashboard {
