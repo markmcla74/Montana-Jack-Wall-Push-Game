@@ -1,3 +1,5 @@
+ //console.log("INDEX.JS IS ALIVE!");
+ //alert("If you see this, the script is loading!");
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
@@ -1251,4 +1253,52 @@ async function startGame(withEnergy) {
          .then(reg => console.log('Service Worker registered successfully!', reg))
          .catch(err => console.log('Service Worker registration failed:', err));
        });
+     }
+     window.addEventListener('load', () => {
+       console.log("Wiring all game buttons...");
+
+       // Helper to wire up a side (left or right)
+       function wireSide(containerId, side) {
+         const buttons = document.querySelectorAll(`${containerId} .game-btn`);
+
+         buttons.forEach(btn => {
+           // Get the action (push, super, or rest) from the button text
+           let action = "";
+           const text = btn.innerText.toLowerCase();
+
+           if (text.includes("super")) action = "super";
+           else if (text.includes("push")) action = "push";
+           else if (text.includes("rest")) action = "rest";
+
+           btn.addEventListener('click', () => {
+             console.log(`${side} choice: ${action}`);
+             handleInput(side, action);
+           });
+         });
+       }
+
+       // Wire up Player 1 (Left) and Player 2 (Right)
+       wireSide('#controlsP1', 'left');
+       wireSide('#controlsP2', 'right');
+
+       console.log("All buttons active!");
+     });
+
+     function handleInput(player, choice) {
+       if (gameOver) return;
+
+       if (player === 'left') {
+         leftChoice = choice;
+       } else if (player === 'right') {
+         rightChoice = choice;
+       }
+
+       // This is the simultaneous "reveal" logic
+       if (leftChoice && rightChoice) {
+         resolveTurn();
+
+         // Reset for the next round
+         leftChoice = null;
+         rightChoice = null;
+       }
      }
