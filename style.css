@@ -212,15 +212,17 @@ box-shadow: none;
 transform: translateY(4px);
 }
 
-/* Target only Portrait mode */
+/* Hide game elements only in Portrait mode */
 @media (orientation: portrait) {
-  #startOverlay {
-  align-items: flex-start; /* Moves menuContainer to the top */
-  padding-top: 20px;       /* Keeps it from touching the very top edge */
+  #gameCanvas, #status {
+  display: none !important;
   }
 
-  #menuContainer {
-  width: 90%;             /* Allow it to be slightly wider in portrait */
-  margin-top: 10px;       /* Extra breathing room */
+  /* Ensure the overlay stays centered and covers the background */
+  #startOverlay {
+  background: rgba(20, 20, 20, 1); /* Solid dark background to hide the 'empty' game space */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   }
 }
