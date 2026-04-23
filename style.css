@@ -196,42 +196,37 @@ margin: 0; /* Remove any margin that was pushing the dashboard down */
 }
 
 #gameDashboard {
-display: none;
-position: fixed;
-bottom: 0;
-left: 0;
-width: 100%;
-height: 45vh;
-background: rgba(0, 0, 0, 0.85);
+flex: 45; /* Takes exactly 45% of the height */
+display: none; /* Hidden until game starts */
+background: #222;
+
+/* Flexbox Row */
 display: flex;
-flex-direction: row;
-padding: 5px 10px;
+justify-content: space-around;
+align-items: stretch; /* Buttons stretch to fill the 45% height */
+padding: 5px 15px;    /* Tight top padding to save space */
+gap: 10px;
 box-sizing: border-box;
 }
 
 .player-controls {
-  flex: 0 0 30%; /* Fixes the buttons to exactly 30% of the width */
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
-  gap: 5px;
-}
-
-#centerUI {
-flex: 1; /* This "gobbles up" all the remaining 40% space in the middle */
-display: flex;
-align-items: center;
-justify-content: center;
-pointer-events: none; /* Touches in the middle won't trigger buttons */
+  justify-content: space-evenly; /* Distributes 3 buttons top-to-bottom */
+  gap: 4px;
+  flex: 1;
 }
 
 .game-btn {
-  width: 100%; /* Fills the 30% side container */
-  height: 28%; /* Ensures all 3 fit vertically with gaps */
-  font-size: 12px;
-  border-radius: 8px;
-  /* ... keep your border-colors ... */
+  flex: 1;           /* Each button shares the 45% height equally */
+  margin: 0;         /* No extra vertical margins */
+  font-weight: bold;
+  font-size: 13px;   /* Slightly smaller font to ensure text fits */
+  border-radius: 6px;
+  border: 3px solid;
+  cursor: pointer;
 }
+
 /* Color Coding */
 .p1-btn { border-color: #ff4d4d; }
 .p2-btn { border-color: #4d94ff; }
