@@ -614,51 +614,49 @@ function drawWinnerPose5(x, y, playerID) {
     }
     
     function checkWinCondition(wallPos) {
-        // Check win condition
-      
+      // 1. Check win condition
       if (wallPos <= crushDistance) {
         document.getElementById("status").innerText = "Player 1 is crushed! Player 2 wins!";
+         draw(); //draw final push
         gameOver = true;
         winner = "right";
-        loser = "left";
-        
       } else if (wallPos >= canvas.width - crushDistance) {
         document.getElementById("status").innerText = "Player 2 is crushed! Player 1 wins!";
+         draw(); //draw final push
         gameOver = true;
         winner = "left";
-        loser = "right";
       }
 
-      
-       
+      // 2. Handle Game Still Running
       if (gameOver === false) {
-       draw();
-      // Code runs after 400 ms
-      // Reset choices
-      setTimeout(()=>{drawDefault(wallPos, canvas.height/2);},400);
-      leftChoice = null;
-      rightChoice = null;
-      //startThinkingSound();
+        draw();
+        setTimeout(() => { drawDefault(wallPos, canvas.height / 2); }, 400);
+        leftChoice = null;
+        rightChoice = null;
       }
-      
-     
-      
-      if ((gameOver === true) && (winner === "right")){
-       drawLoserAndWinner("left");
-      
-      }
-      
-      if ((gameOver === true) && (winner === "left")){
-       drawLoserAndWinner("right");
-      }
-      
-       if (gameOver === true){
-        document.getElementById("startOverlay").style.display = "flex";
+
+      // 3. Handle Game Over (The Victory Sequence)
+      if (gameOver === true) {
+        // Immediate Visuals: Draw the winner/loser state
+        if (winner === "right") drawLoserAndWinner("left");
+        if (winner === "left") drawLoserAndWinner("right");
+
+        // Start the victory sounds immediately
         stopThinkingSound();
         playCrushedAndVictory();
-        
-      } 
-    
+
+        // DELAYED ACTIONS: Wait 3 seconds before resetting the UI
+        setTimeout(() => {
+          // Bring back the start menu
+          document.getElementById("startOverlay").style.display = "flex";
+
+          // Clear the status text so it's fresh for the next game
+          document.getElementById("status").innerText = "";
+
+          // Optional: If you have a specific reset function for the wall/energy,
+          // you could call it here.
+        }, 3000);
+      }
     }
 
     function resolveTurn() {
