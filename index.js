@@ -611,6 +611,9 @@ function drawWinnerPose5(x, y, playerID) {
       victoryLossScene1 = null;
       victoryLossScene2 = null;
       drawDefault(wallPos, canvas.height/2);
+      document.querySelectorAll('.game-btn').forEach(btn => {
+        btn.classList.remove('is-pressed');
+      });
     }
     
     function checkWinCondition(wallPos) {
@@ -1269,7 +1272,58 @@ async function startGame(withEnergy) {
            else if (text.includes("rest")) action = "rest";
 
            btn.addEventListener('click', () => {
-             console.log(`${side} choice: ${action}`);
+             //console.log(`${side} choice: ${action}`);
+
+             //remove 'is-pressed' from all buttons
+             //console.log("buttons length",buttons.length); 3 buttons, NOT all 6
+             for (let j=0; j<buttons.length; j++){
+               if (buttons[j].classList.contains('is-pressed')){
+                 buttons[j].classList.remove('is-pressed');
+               }
+             }
+
+             if (containerId === "#controlsP1" && action === "push") {
+               buttons[0].classList.add('is-pressed');
+
+             }
+
+             if (containerId === "#controlsP1" && action === "super") {
+
+               //console.log("Player 1 selected SUPER PUSH!");
+               //console.log("btn.classList",btn.classList);
+
+               // Add the attribute/class to show it is pressed
+               //btn.classList.add('is-pressed');
+               buttons[1].classList.add('is-pressed');
+               // This returns true or false
+               //let isSuperPressed = buttons[1].classList.contains('is-pressed');
+
+               //if (isSuperPressed) {
+                // console.log("isSuperPressed",isSuperPressed);
+              // }
+             }
+             if (containerId === "#controlsP1" && action === "rest") {
+               buttons[2].classList.add('is-pressed');
+
+             }
+             if (containerId === "#controlsP2" && action === "push") {
+               buttons[0].classList.add('is-pressed');
+
+             }
+
+             if (containerId === "#controlsP2" && action === "super") {
+
+               buttons[1].classList.add('is-pressed');
+
+             }
+             if (containerId === "#controlsP2" && action === "rest") {
+               buttons[2].classList.add('is-pressed');
+
+             }
+
+
+
+
              handleInput(side, action);
            });
          });
@@ -1294,6 +1348,11 @@ async function startGame(withEnergy) {
        // This is the simultaneous "reveal" logic
        if (leftChoice && rightChoice) {
          resolveTurn();
+
+         // Wait 500ms (half a second) before clearing the buttons
+         setTimeout(() => {
+           document.querySelectorAll('.game-btn').forEach(btn => btn.classList.remove('is-pressed'));
+         }, 500);
 
          // Reset for the next round
          leftChoice = null;
