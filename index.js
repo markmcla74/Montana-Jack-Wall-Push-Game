@@ -1,5 +1,6 @@
  //console.log("INDEX.JS IS ALIVE!");
  //alert("If you see this, the script is loading!");
+    let audioCtx; // Just declare it here
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
@@ -36,7 +37,7 @@
     let wallPos = null;
     let thinkingInterval; // store so we can stop it
     let showEnergy = true; // default
-    let audioCtx = null;   // global AudioContext
+   // let audioCtx = null;   // global AudioContext
     
     function resizeCanvas() {
   const canvas = document.getElementById("gameCanvas");
@@ -457,7 +458,7 @@ function drawWinnerPose5(x, y, playerID) {
   ctx.beginPath();
   ctx.moveTo(x, y - 13*scale);
   ctx.lineTo(x, y + 15*scale);
-  ctx.stroke(); 
+  ctx.stroke();
 
   // Legs: wide stance
   ctx.beginPath();
@@ -960,7 +961,7 @@ function drawWinnerPose5(x, y, playerID) {
     }
     
     function playHadouken() {
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  //const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
   // Oscillator for the "energy charge"
   const osc = audioCtx.createOscillator();
@@ -980,154 +981,171 @@ function drawWinnerPose5(x, y, playerID) {
   osc.stop(audioCtx.currentTime + 1.0); // total duration ~1 second
 }
 
-   function playPushSound() {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+function playPushSound() {
+  // We use the global audioCtx instead of creating a local ctx
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
 
-  // A little "pew" sound, shorter and higher-pitched
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
+  osc.type = "square";
 
-  osc.type = "square";          // square gives it a bit of "toy" quality
-  osc.frequency.setValueAtTime(300, ctx.currentTime);   // start higher
-  osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.2); // quick drop
+  // Update 'ctx' to 'audioCtx' for time and destination
+  osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.2);
 
-  gain.gain.setValueAtTime(0.2, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+  gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
 
-  osc.connect(gain).connect(ctx.destination);
+  // Connect to the global destination
+  osc.connect(gain).connect(audioCtx.destination);
+
   osc.start();
-  osc.stop(ctx.currentTime + 0.25); // much shorter than super push
+  osc.stop(audioCtx.currentTime + 0.25);
 }
 
-    function playRestSound() {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+function playRestSound() {
+  // 1. We removed the local ctx. Use the global audioCtx instead.
 
   // First "ding"
-  const osc1 = ctx.createOscillator();
-  const gain1 = ctx.createGain();
+  const osc1 = audioCtx.createOscillator();
+  const gain1 = audioCtx.createGain();
   osc1.type = "sine";
-  osc1.frequency.setValueAtTime(600, ctx.currentTime);
-  gain1.gain.setValueAtTime(0.2, ctx.currentTime);
-  gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
-  osc1.connect(gain1).connect(ctx.destination);
-  osc1.start();
-  osc1.stop(ctx.currentTime + 0.25);
 
-  // Second "ding" slightly higher, shortly after
-  const osc2 = ctx.createOscillator();
-  const gain2 = ctx.createGain();
+  // Use audioCtx for timing and frequency
+  osc1.frequency.setValueAtTime(600, audioCtx.currentTime);
+  gain1.gain.setValueAtTime(0.2, audioCtx.currentTime);
+  gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+
+  // Connect to the global audioCtx destination
+  osc1.connect(gain1).connect(audioCtx.destination);
+  osc1.start();
+  osc1.stop(audioCtx.currentTime + 0.25);
+
+  // Second "ding"
+  const osc2 = audioCtx.createOscillator();
+  const gain2 = audioCtx.createGain();
   osc2.type = "sine";
-  osc2.frequency.setValueAtTime(800, ctx.currentTime + 0.15);
-  gain2.gain.setValueAtTime(0.2, ctx.currentTime + 0.15);
-  gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
-  osc2.connect(gain2).connect(ctx.destination);
-  osc2.start(ctx.currentTime + 0.15);
-  osc2.stop(ctx.currentTime + 0.4);
+
+  // Notice all timing is relative to audioCtx.currentTime
+  osc2.frequency.setValueAtTime(800, audioCtx.currentTime + 0.15);
+  gain2.gain.setValueAtTime(0.2, audioCtx.currentTime + 0.15);
+  gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+
+  osc2.connect(gain2).connect(audioCtx.destination);
+  osc2.start(audioCtx.currentTime + 0.15);
+  osc2.stop(audioCtx.currentTime + 0.4);
 }
 
 function playDoNothingSound() {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  // Use the global audioCtx established in your startGame function
 
   // First low tone
-  const osc1 = ctx.createOscillator();
-  const gain1 = ctx.createGain();
+  const osc1 = audioCtx.createOscillator();
+  const gain1 = audioCtx.createGain();
   osc1.type = "sawtooth";
-  osc1.frequency.setValueAtTime(200, ctx.currentTime);
-  gain1.gain.setValueAtTime(0.15, ctx.currentTime);
-  gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-  osc1.connect(gain1).connect(ctx.destination);
-  osc1.start();
-  osc1.stop(ctx.currentTime + 0.3);
+  osc1.frequency.setValueAtTime(200, audioCtx.currentTime);
+  gain1.gain.setValueAtTime(0.15, audioCtx.currentTime);
+  gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
 
-  // Slightly lower tone right after (makes it sound "falling")
-  const osc2 = ctx.createOscillator();
-  const gain2 = ctx.createGain();
+  // Connect to the shared destination
+  osc1.connect(gain1).connect(audioCtx.destination);
+  osc1.start();
+  osc1.stop(audioCtx.currentTime + 0.3);
+
+  // Slightly lower tone right after
+  const osc2 = audioCtx.createOscillator();
+  const gain2 = audioCtx.createGain();
   osc2.type = "sawtooth";
-  osc2.frequency.setValueAtTime(150, ctx.currentTime + 0.25);
-  gain2.gain.setValueAtTime(0.12, ctx.currentTime + 0.25);
-  gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.55);
-  osc2.connect(gain2).connect(ctx.destination);
-  osc2.start(ctx.currentTime + 0.25);
-  osc2.stop(ctx.currentTime + 0.55);
+  osc2.frequency.setValueAtTime(150, audioCtx.currentTime + 0.25);
+  gain2.gain.setValueAtTime(0.12, audioCtx.currentTime + 0.25);
+  gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.55);
+
+  osc2.connect(gain2).connect(audioCtx.destination);
+  osc2.start(audioCtx.currentTime + 0.25);
+  osc2.stop(audioCtx.currentTime + 0.55);
 }
 
 function playCrushedAndVictory() {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  // We use the global audioCtx established in startGame
 
-  // --- CRUSHED SOUND ---
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
+  // --- 1. CRUSHED SOUND ---
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
   osc.type = "sine";
-  osc.frequency.setValueAtTime(100, ctx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.5);
-  gain.gain.setValueAtTime(0.7, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
-  osc.connect(gain).connect(ctx.destination);
+  osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.5);
+  gain.gain.setValueAtTime(0.7, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+  osc.connect(gain).connect(audioCtx.destination);
   osc.start();
-  osc.stop(ctx.currentTime + 0.6);
+  osc.stop(audioCtx.currentTime + 0.6);
 
-  // Noise burst (rubble)
-  const bufferSize = ctx.sampleRate * 0.3;
-  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  // --- 2. NOISE BURST (RUBBLE) ---
+  const bufferSize = audioCtx.sampleRate * 0.3;
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
   const data = buffer.getChannelData(0);
   for (let i = 0; i < bufferSize; i++) {
     data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2);
   }
-  const noise = ctx.createBufferSource();
+  const noise = audioCtx.createBufferSource();
   noise.buffer = buffer;
-  const noiseGain = ctx.createGain();
-  noiseGain.gain.setValueAtTime(0.5, ctx.currentTime);
-  noiseGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-  noise.connect(noiseGain).connect(ctx.destination);
+  const noiseGain = audioCtx.createGain();
+  noiseGain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+  noiseGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+  noise.connect(noiseGain).connect(audioCtx.destination);
   noise.start();
 
-  // --- VICTORY JINGLE LOOP ---
+  // --- 3. VICTORY JINGLE LOOP ---
+  // Notice we updated 'ctx' to 'audioCtx' inside this helper too!
   function playNote(freq, startTime, duration) {
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
     o.type = "square";
     o.frequency.setValueAtTime(freq, startTime);
     g.gain.setValueAtTime(0.4, startTime);
     g.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-    o.connect(g).connect(ctx.destination);
+    o.connect(g).connect(audioCtx.destination);
     o.start(startTime);
     o.stop(startTime + duration);
   }
 
-  // Loop jingle sequence (C → E → G) every 0.8s for 10s
-  const startDelay = 0.7; // after crush
+  const startDelay = 0.7;
   const loopDuration = 0.8;
   const totalTime = 5;
   let t = startDelay;
   while (t < totalTime) {
-    playNote(261.63, ctx.currentTime + t, 0.25); // C4
-    playNote(329.63, ctx.currentTime + t + 0.25, 0.25); // E4
-    playNote(392.00, ctx.currentTime + t + 0.5, 0.3); // G4
+    // Schedule notes relative to audioCtx.currentTime
+    playNote(261.63, audioCtx.currentTime + t, 0.25);
+    playNote(329.63, audioCtx.currentTime + t + 0.25, 0.25);
+    playNote(392.00, audioCtx.currentTime + t + 0.5, 0.3);
     t += loopDuration;
   }
 }
 
 function startThinkingSound() {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  
-  // Keep a reference so multiple intervals don’t overlap
+  // 1. We no longer create a 'new' context here.
+  // We use the 'audioCtx' created in startGame.
+
   if (thinkingInterval) clearInterval(thinkingInterval);
 
   thinkingInterval = setInterval(() => {
-    // small random blip, short duration
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
+    // 2. Change 'ctx' to 'audioCtx' here:
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
     osc.type = "triangle";
-    const freq = 300 + Math.random() * 200; // random gentle tone
-    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    const freq = 300 + Math.random() * 200;
 
-    gain.gain.setValueAtTime(0.05, ctx.currentTime); // very soft
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+    // 3. And here:
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
-    osc.connect(gain).connect(ctx.destination);
+    // 4. And everywhere else inside this loop:
+    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+
+    osc.connect(gain).connect(audioCtx.destination);
     osc.start();
-    osc.stop(ctx.currentTime + 0.15);
-  }, 300); // every 300ms
+    osc.stop(audioCtx.currentTime + 0.15);
+  }, 300);
 }
 
 function stopThinkingSound() {
@@ -1162,7 +1180,7 @@ async function startGame(withEnergy) {
   // 2. HIDE OVERLAY
   document.getElementById("startOverlay").style.display = "none";
 
-  // 3. AUDIO CONTEXT (Create/Resume)
+  // Create the context once and resume it
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
