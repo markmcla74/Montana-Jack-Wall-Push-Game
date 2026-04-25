@@ -1356,7 +1356,7 @@ async function startGame(withEnergy) {
      });
 
      function handleInput(player, choice) {
-       if (gameOver) return;
+       if (gameOver || isProcessing) return; // Guard at the very top!
 
        if (player === 'left') {
          leftChoice = choice;
@@ -1364,19 +1364,21 @@ async function startGame(withEnergy) {
          rightChoice = choice;
        }
 
-       // This is the simultaneous "reveal" logic
        if (leftChoice && rightChoice) {
-         isProcessing = true; // LOCK THE BUTTONS
+         isProcessing = true; // LOCK THROWN
          resolveTurn();
 
-         // Wait 500ms (half a second) before clearing the buttons
+         // Move ALL the reset logic inside the timer
          setTimeout(() => {
+           // 1. Wipe the visual highlights
            document.querySelectorAll('.game-btn').forEach(btn => btn.classList.remove('is-pressed'));
-         }, 500);
 
-         // Reset for the next round
-         isProcessing = false; // UNLOCK
-         leftChoice = null;
-         rightChoice = null;
+           // 2. Clear the choices
+           leftChoice = null;
+           rightChoice = null;
+
+           // 3. FINALLY, unlock the buttons for the next round
+           isProcessing = false;
+         }, 800); // Increased slightly so players can see the result
        }
      }
