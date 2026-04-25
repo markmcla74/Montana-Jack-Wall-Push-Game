@@ -4,6 +4,7 @@
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
+    let isProcessing = false;
     // New State Variables
     let isTwoPlayer = false;
 
@@ -1365,6 +1366,7 @@ async function startGame(withEnergy) {
 
        // This is the simultaneous "reveal" logic
        if (leftChoice && rightChoice) {
+         isProcessing = true; // LOCK THE BUTTONS
          resolveTurn();
 
          // Wait 500ms (half a second) before clearing the buttons
@@ -1373,6 +1375,7 @@ async function startGame(withEnergy) {
          }, 500);
 
          // Reset for the next round
+         isProcessing = false; // UNLOCK
          leftChoice = null;
          rightChoice = null;
        }
