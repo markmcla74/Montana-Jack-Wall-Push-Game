@@ -28,9 +28,7 @@
       color: white;
       cursor: pointer;
     }
-    button:hover {
-      background: #666;
-    }
+
 
    
    #status {
@@ -147,7 +145,12 @@ box-shadow: 0 4px 0 #c0392b;
 box-shadow: none;
 transform: translateY(4px);
 }
-
+/* This is our custom 'pressed' state */
+.is-pressed {
+  background-color: #555 !important;
+  border: 2px solid white;
+  transform: translateY(2px); /* Makes it look physically pushed down */
+}
 
 
 #rules {
