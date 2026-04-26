@@ -234,6 +234,7 @@ justify-content: center;
   border-radius: 6px;
   border: 3px solid;
   cursor: pointer;
+  touch-action: manipulation; /* Disables the double-tap-to-zoom delay */
 }
 
 /* Color Coding */

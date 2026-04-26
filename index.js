@@ -1356,29 +1356,32 @@ async function startGame(withEnergy) {
      });
 
      function handleInput(player, choice) {
-       if (gameOver || isProcessing) return; // Guard at the very top!
+       if (gameOver || isProcessing) return;
 
-       if (player === 'left') {
-         leftChoice = choice;
-       } else if (player === 'right') {
-         rightChoice = choice;
-       }
+       // 1. Force the choice into the variable immediately
+       if (player === 'left') leftChoice = choice;
+       if (player === 'right') rightChoice = choice;
 
-       if (leftChoice && rightChoice) {
-         isProcessing = true; // LOCK THROWN
-         resolveTurn();
+       // 2. THE FAILSAFE: Check the actual buttons on screen
+       // This ensures the game only moves if BOTH sides actually have a lit-up button
+       const p1Ready = !!document.querySelector('#controlsP1 .is-pressed');
+       const p2Ready = !!document.querySelector('#controlsP2 .is-pressed');
 
-         // Move ALL the reset logic inside the timer
+       if (p1Ready && p2Ready) {
+         isProcessing = true;
+
+         // Small "Dirtbag" delay (50ms) to let the browser 'breathe'
+         // before the heavy math of resolveTurn()
          setTimeout(() => {
-           // 1. Wipe the visual highlights
-           document.querySelectorAll('.game-btn').forEach(btn => btn.classList.remove('is-pressed'));
+           resolveTurn();
 
-           // 2. Clear the choices
-           leftChoice = null;
-           rightChoice = null;
-
-           // 3. FINALLY, unlock the buttons for the next round
-           isProcessing = false;
-         }, 800); // Increased slightly so players can see the result
+           // Lock the game until the wall finishes moving
+           setTimeout(() => {
+             document.querySelectorAll('.game-btn').forEach(btn => btn.classList.remove('is-pressed'));
+             leftChoice = null;
+             rightChoice = null;
+             isProcessing = false;
+           }, 700);
+         }, 50);
        }
      }
