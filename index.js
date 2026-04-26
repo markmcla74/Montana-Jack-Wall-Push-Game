@@ -858,7 +858,7 @@ function drawWinnerPose5(x, y, playerID) {
       if ((leftChoice === "push" && player1Energy >= 1) && (rightChoice === "super" && player2Energy >= 3)){
         playPushSound();
         playHadouken();
-        player1Energy += 4;
+        player1Energy -= 1;
         player2Energy -= 3;
         if ((wallPos - wallPushDistance) > crushDistance){
           wallPos -= wallPushDistance;
@@ -1334,7 +1334,10 @@ async function startGame(withEnergy) {
          if (player === 'left') {
            leftChoice = choice;
 
-           // TRIGGER THE CPU: wait 600ms so the player can see their own button light up first
+           // TRIGGER THE CPU: wait 400ms so the player can see their own button light up first
+           // mutual recursion (or a circular dependency) part of the code. makeCPUMove calls handleInput
+           // handleInput will then have a completed left and right choice and resolveTurn.
+           // isProcessing is set to false so handleInput will properly "unwind" out of its recursion.
            setTimeout(makeCPUMove, 400);
          }
 
@@ -1372,24 +1375,39 @@ async function startGame(withEnergy) {
      function makeCPUMove() {
        if (gameOver || isProcessing) return;
 
-       // 1. CPU Decision Logic
        let action = "";
+       const e = player2Energy;
        const rand = Math.random();
 
-       if (rand < 0.6) action = "push";
-       else if (rand < 0.8) action = "super";
-       else action = "rest";
+       // 1. ENERGY-BASED BRAIN
+       if (e === 0) {
+         action = "rest";
+       }
+       else if (e === 1) {
+         action = rand < 0.8 ? "rest" : "push";
+       }
+       else if (e === 2) {
+         action = rand < 0.7 ? "rest" : "push";
+       }
+       else if (e >= 3 && e < 9) {
+         // 50% super, 25% push (0.5 + 0.25 = 0.75), 25% rest
+         if (rand < 0.5) action = "super";
+         else if (rand < 0.75) action = "push";
+         else action = "rest";
+       }
+       else if (e >= 9) {
+         action = rand < 0.8 ? "super" : "push";
+       }
 
-       // 2. Visual Feedback (The "Ghost Click")
-       // We find the right-side buttons and highlight the one the CPU "chose"
+       // 2. VISUAL FEEDBACK
        const cpuButtons = document.querySelectorAll('#controlsP2 .game-btn');
-       cpuButtons.forEach(btn => btn.classList.remove('is-pressed')); // Clear previous
+       cpuButtons.forEach(btn => btn.classList.remove('is-pressed'));
 
        if (action === "push") cpuButtons[0].classList.add('is-pressed');
        if (action === "super") cpuButtons[1].classList.add('is-pressed');
        if (action === "rest") cpuButtons[2].classList.add('is-pressed');
 
-       // 3. Send choice to handleInput
-       console.log("CPU selected:", action);
+       // 3. EXECUTE
+       console.log(`CPU Energy: ${e} | Action: ${action}`);
        handleInput('right', action);
      }
