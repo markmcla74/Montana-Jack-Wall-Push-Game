@@ -1223,6 +1223,7 @@ async function startGame(withEnergy) {
     btn1P.onclick = (e) => {
       e.stopPropagation(); // Stop the click from "bubbling" up
       isTwoPlayer = false;
+      //console.log("1 player button pushed");
       btn1P.classList.add("active");
       btn2P.classList.remove("active");
 
@@ -1231,6 +1232,7 @@ async function startGame(withEnergy) {
     btn2P.onclick = (e) => {
       e.stopPropagation();
       isTwoPlayer = true;
+      console.log("isTwoPlayer",isTwoPlayer);
       btn2P.classList.add("active");
       btn1P.classList.remove("active");
 
@@ -1282,7 +1284,6 @@ async function startGame(withEnergy) {
          const buttons = document.querySelectorAll(`${containerId} .game-btn`);
 
          buttons.forEach(btn => {
-           // Get the action (push, super, or rest) from the button text
            let action = "";
            const text = btn.innerText.toLowerCase();
 
@@ -1291,66 +1292,36 @@ async function startGame(withEnergy) {
            else if (text.includes("rest")) action = "rest";
 
            btn.addEventListener('click', () => {
-             //console.log(`${side} choice: ${action}`);
-
-             //remove 'is-pressed' from all buttons
-             //console.log("buttons length",buttons.length); 3 buttons, NOT all 6
-             for (let j=0; j<buttons.length; j++){
-               if (buttons[j].classList.contains('is-pressed')){
-                 buttons[j].classList.remove('is-pressed');
-               }
+             // --- THE ANTI-CHEAT GATE ---
+             // If it's a 1P game and the side is Right, ignore the click
+             if (isTwoPlayer === false && side === 'right') {
+               console.log("Player 1, no cheating! This is the computer's side.");
+               return;
              }
 
-             if (containerId === "#controlsP1" && action === "push") {
-               buttons[0].classList.add('is-pressed');
+             // Existing safety: Don't allow clicks during turn resolution
+             if (isProcessing) return;
 
+             // 1. Remove 'is-pressed' from all buttons in this specific container
+             for (let j = 0; j < buttons.length; j++) {
+               buttons[j].classList.remove('is-pressed');
              }
 
-             if (containerId === "#controlsP1" && action === "super") {
+             // 2. Add 'is-pressed' back to the clicked button
+             // (Simplified your if/else chain by just adding it to the current 'btn')
+             btn.classList.add('is-pressed');
 
-               //console.log("Player 1 selected SUPER PUSH!");
-               //console.log("btn.classList",btn.classList);
-
-               // Add the attribute/class to show it is pressed
-               //btn.classList.add('is-pressed');
-               buttons[1].classList.add('is-pressed');
-               // This returns true or false
-               //let isSuperPressed = buttons[1].classList.contains('is-pressed');
-
-               //if (isSuperPressed) {
-                // console.log("isSuperPressed",isSuperPressed);
-              // }
-             }
-             if (containerId === "#controlsP1" && action === "rest") {
-               buttons[2].classList.add('is-pressed');
-
-             }
-             if (containerId === "#controlsP2" && action === "push") {
-               buttons[0].classList.add('is-pressed');
-
-             }
-
-             if (containerId === "#controlsP2" && action === "super") {
-
-               buttons[1].classList.add('is-pressed');
-
-             }
-             if (containerId === "#controlsP2" && action === "rest") {
-               buttons[2].classList.add('is-pressed');
-
-             }
-
-
-
-
+             // 3. Send to logic
              handleInput(side, action);
            });
          });
        }
 
        // Wire up Player 1 (Left) and Player 2 (Right)
-       wireSide('#controlsP1', 'left');
-       wireSide('#controlsP2', 'right');
+         wireSide('#controlsP1', 'left');
+         wireSide('#controlsP2', 'right');
+
+
 
        console.log("All buttons active!");
      });
@@ -1358,24 +1329,36 @@ async function startGame(withEnergy) {
      function handleInput(player, choice) {
        if (gameOver || isProcessing) return;
 
-       // 1. Force the choice into the variable immediately
-       if (player === 'left') leftChoice = choice;
-       if (player === 'right') rightChoice = choice;
+       // --- ONE PLAYER LOGIC ---
+       if (isTwoPlayer === false) {
+         if (player === 'left') {
+           leftChoice = choice;
 
-       // 2. THE FAILSAFE: Check the actual buttons on screen
-       // This ensures the game only moves if BOTH sides actually have a lit-up button
+           // TRIGGER THE CPU: wait 600ms so the player can see their own button light up first
+           setTimeout(makeCPUMove, 400);
+         }
+
+         if (player === 'right') {
+           rightChoice = choice;
+         }
+       }
+
+       // --- TWO PLAYER LOGIC ---
+       if (isTwoPlayer === true) {
+         if (player === 'left') leftChoice = choice;
+         if (player === 'right') rightChoice = choice;
+       }
+
+       // --- THE FAILSAFE: Check for the "Clash" ---
        const p1Ready = !!document.querySelector('#controlsP1 .is-pressed');
        const p2Ready = !!document.querySelector('#controlsP2 .is-pressed');
 
        if (p1Ready && p2Ready) {
          isProcessing = true;
 
-         // Small "Dirtbag" delay (50ms) to let the browser 'breathe'
-         // before the heavy math of resolveTurn()
          setTimeout(() => {
            resolveTurn();
 
-           // Lock the game until the wall finishes moving
            setTimeout(() => {
              document.querySelectorAll('.game-btn').forEach(btn => btn.classList.remove('is-pressed'));
              leftChoice = null;
@@ -1384,4 +1367,29 @@ async function startGame(withEnergy) {
            }, 700);
          }, 50);
        }
+     }
+
+     function makeCPUMove() {
+       if (gameOver || isProcessing) return;
+
+       // 1. CPU Decision Logic
+       let action = "";
+       const rand = Math.random();
+
+       if (rand < 0.6) action = "push";
+       else if (rand < 0.8) action = "super";
+       else action = "rest";
+
+       // 2. Visual Feedback (The "Ghost Click")
+       // We find the right-side buttons and highlight the one the CPU "chose"
+       const cpuButtons = document.querySelectorAll('#controlsP2 .game-btn');
+       cpuButtons.forEach(btn => btn.classList.remove('is-pressed')); // Clear previous
+
+       if (action === "push") cpuButtons[0].classList.add('is-pressed');
+       if (action === "super") cpuButtons[1].classList.add('is-pressed');
+       if (action === "rest") cpuButtons[2].classList.add('is-pressed');
+
+       // 3. Send choice to handleInput
+       console.log("CPU selected:", action);
+       handleInput('right', action);
      }
