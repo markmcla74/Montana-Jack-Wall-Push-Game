@@ -183,6 +183,7 @@ html, body {
 display: flex;
 flex-direction: column;
 height: 100vh; /* Lock to the screen height */
+height: 100dvh; /* The "Dynamic" height that adjusts when bars appear/disappear */
 width: 100vw;
 margin: 0;
 padding: 0;
@@ -254,5 +255,16 @@ justify-content: center;
   display: flex;
   justify-content: center;
   align-items: center;
+  }
+}
+
+@media (orientation: landscape) {
+  .controls-container {
+    height: 30%; /* Give the buttons a fixed percentage of the height */
+    padding-bottom: env(safe-area-inset-bottom); /* Respect the iPhone home bar */
+  }
+  canvas {
+    height: 60%; /* Shrink the canvas slightly to make room for buttons */
+    width: auto;
   }
 }
