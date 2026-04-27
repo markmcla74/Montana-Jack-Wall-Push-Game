@@ -672,7 +672,7 @@ function drawWinnerPose5(x, y, playerID) {
 
       // 1. Resolve Player 1 Intent & Energy
       if (leftChoice === "rest") {
-        player1Energy += 3;
+        player1Energy += 2;
         p1Power = 0;
         playRestSound();
       } else if (leftChoice === "push" && player1Energy >= 1) {
@@ -693,7 +693,7 @@ function drawWinnerPose5(x, y, playerID) {
 
       // 2. Resolve Player 2 Intent & Energy
       if (rightChoice === "rest") {
-        player2Energy += 3;
+        player2Energy += 2;
         p2Power = 0;
         playRestSound();
       } else if (rightChoice === "push" && player2Energy >= 1) {
