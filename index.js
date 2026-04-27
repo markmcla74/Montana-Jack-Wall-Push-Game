@@ -16,8 +16,8 @@
     const startBtn = document.getElementById("startGameBtn");
 
     // Game State
-    let player1Energy = 3;
-    let player2Energy = 3;
+    let player1Energy = 2;
+    let player2Energy = 2;
     
   
     const leftSide = "left";
@@ -599,8 +599,8 @@ function drawWinnerPose5(x, y, playerID) {
     
      function initGame() {
       //console.log("here");
-      player1Energy = 3;
-      player2Energy = 3;
+      player1Energy = 2;
+      player2Energy = 2;
       wallPos = canvas.width / 2;
       gameOver = false;
       leftChoice = null;
