@@ -677,7 +677,7 @@ function drawWinnerPose5(x, y, playerID) {
         playRestSound();
       } else if (leftChoice === "push" && player1Energy >= 1) {
         player1Energy -= 1;
-        p1Power = 1;
+        p1Power = 1.5;
         playPushSound();
       } else if (leftChoice === "super" && player1Energy >= 4) {
         player1Energy -= 4;
@@ -698,7 +698,7 @@ function drawWinnerPose5(x, y, playerID) {
         playRestSound();
       } else if (rightChoice === "push" && player2Energy >= 1) {
         player2Energy -= 1;
-        p2Power = 1;
+        p2Power = 1.5;
         playPushSound();
       } else if (rightChoice === "super" && player2Energy >= 4) {
         player2Energy -= 4;
