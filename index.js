@@ -672,19 +672,20 @@ function drawWinnerPose5(x, y, playerID) {
 
       // 1. Resolve Player 1 Intent & Energy
       if (leftChoice === "rest") {
-        player1Energy += 4;
+        player1Energy += 3;
         p1Power = 0;
         playRestSound();
       } else if (leftChoice === "push" && player1Energy >= 1) {
         player1Energy -= 1;
         p1Power = 1;
         playPushSound();
-      } else if (leftChoice === "super" && player1Energy >= 3) {
-        player1Energy -= 3;
+      } else if (leftChoice === "super" && player1Energy >= 4) {
+        player1Energy -= 4;
         p1Power = 2;
         playHadouken();
       } else {
-        // Attempted move with no energy
+        // PENALTY: Tried to Move without enough Energy
+        // We set it to zero to punish the "bad guess" or "bad bluff"
         player1Energy = 0;
         p1Power = 0;
         playDoNothingSound();
@@ -692,30 +693,29 @@ function drawWinnerPose5(x, y, playerID) {
 
       // 2. Resolve Player 2 Intent & Energy
       if (rightChoice === "rest") {
-        player2Energy += 4;
+        player2Energy += 3;
         p2Power = 0;
         playRestSound();
       } else if (rightChoice === "push" && player2Energy >= 1) {
         player2Energy -= 1;
         p2Power = 1;
         playPushSound();
-      } else if (rightChoice === "super" && player2Energy >= 3) {
-        player2Energy -= 3;
+      } else if (rightChoice === "super" && player2Energy >= 4) {
+        player2Energy -= 4;
         p2Power = 2;
         playHadouken();
       } else {
+        // PENALTY: Same for Player 2
         player2Energy = 0;
         p2Power = 0;
         playDoNothingSound();
       }
 
-      // 3. Move the Wall based on the Difference in Power
-      // If p1Power is 2 and p2Power is 1, wall moves +1 towards Player 2
+      // 3. Move the Wall
       let netMove = (p1Power - p2Power) * wallPushDistance;
 
       if (netMove !== 0) {
         let targetPos = wallPos + netMove;
-        // Boundary checks (crush distance)
         if (targetPos < crushDistance) wallPos = 0.9 * crushDistance;
         else if (targetPos > (canvas.width - crushDistance)) wallPos = canvas.width - 0.9 * crushDistance;
         else wallPos = targetPos;
@@ -1134,7 +1134,6 @@ async function startGame(withEnergy) {
          }, 50);
        }
      }
-
      function makeCPUMove() {
        if (gameOver || isProcessing) return;
 
@@ -1146,19 +1145,18 @@ async function startGame(withEnergy) {
        if (e === 0) {
          action = "rest";
        }
-       else if (e === 1) {
-         action = rand < 0.8 ? "rest" : "push";
+       else if (e >= 1 && e <= 3) {
+         // Saving phase
+         action = rand < 0.75 ? "rest" : "push";
        }
-       else if (e === 2) {
-         action = rand < 0.7 ? "rest" : "push";
-       }
-       else if (e >= 3 && e < 9) {
-         // 50% super, 25% push (0.5 + 0.25 = 0.75), 25% rest
-         if (rand < 0.5) action = "super";
-         else if (rand < 0.75) action = "push";
+       else if (e >= 4 && e <= 7) { // Changed to <= 7 to catch that middle value
+         // Tier 2: 40% super, 40% push, 20% rest
+         if (rand < 0.4) action = "super";
+         else if (rand < 0.8) action = "push";
          else action = "rest";
        }
-       else if (e >= 9) {
+       else if (e >= 8) {
+         // Tier 3: High energy aggression (2 full Supers ready)
          action = rand < 0.8 ? "super" : "push";
        }
 
