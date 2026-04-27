@@ -681,7 +681,7 @@ function drawWinnerPose5(x, y, playerID) {
         playPushSound();
       } else if (leftChoice === "super" && player1Energy >= 4) {
         player1Energy -= 4;
-        p1Power = 2;
+        p1Power = 3;
         playHadouken();
       } else {
         // PENALTY: Tried to Move without enough Energy
@@ -702,7 +702,7 @@ function drawWinnerPose5(x, y, playerID) {
         playPushSound();
       } else if (rightChoice === "super" && player2Energy >= 4) {
         player2Energy -= 4;
-        p2Power = 2;
+        p2Power = 3;
         playHadouken();
       } else {
         // PENALTY: Same for Player 2
