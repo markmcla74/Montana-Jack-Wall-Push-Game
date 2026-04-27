@@ -1149,15 +1149,17 @@ async function startGame(withEnergy) {
          // Saving phase
          action = rand < 0.75 ? "rest" : "push";
        }
-       else if (e >= 4 && e <= 7) { // Changed to <= 7 to catch that middle value
-         // Tier 2: 40% super, 40% push, 20% rest
-         if (rand < 0.4) action = "super";
-         else if (rand < 0.8) action = "push";
+       else if (e >= 4 && e <= 7) {
+         // Tier 2: Increased Aggression
+         // 70% Super Push, 20% Push, 10% Rest
+         if (rand < 0.7) action = "super";
+         else if (rand < 0.9) action = "push";
          else action = "rest";
        }
        else if (e >= 8) {
-         // Tier 3: High energy aggression (2 full Supers ready)
-         action = rand < 0.8 ? "super" : "push";
+         // Tier 3: Pure Panic Mode for the player
+         // 90% chance to Super Push if they have 2+ in the bank
+         action = rand < 0.9 ? "super" : "push";
        }
 
        // 2. VISUAL FEEDBACK
