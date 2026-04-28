@@ -249,7 +249,10 @@ width: 100%;
   color: white;
   height: 50px;
   cursor: pointer;
-  touch-action: manipulation; /* Disables the double-tap-to-zoom delay */
+  /*touch-action: manipulation;  Disables the double-tap-to-zoom delay */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none; /* For the iPhone test */
 }
 
 /* Color Coding */

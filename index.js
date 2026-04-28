@@ -1101,24 +1101,25 @@ async function startGame(withEnergy) {
            else if (text.includes("push")) action = "push";
            else if (text.includes("rest")) action = "rest";
 
-           btn.addEventListener('click', () => {
+           // SWAP: 'click' becomes 'pointerdown'
+           btn.addEventListener('pointerdown', (e) => {
+             // Prevents the browser from waiting to see if you are double-tapping
+             // and stops the 'click' event from firing a second time later.
+             e.preventDefault();
+
              // --- THE ANTI-CHEAT GATE ---
-             // If it's a 1P game and the side is Right, ignore the click
              if (isTwoPlayer === false && side === 'right') {
                console.log("Player 1, no cheating! This is the computer's side.");
                return;
              }
 
-             // Existing safety: Don't allow clicks during turn resolution
+             // Existing safety
              if (isProcessing) return;
 
              // 1. Remove 'is-pressed' from all buttons in this specific container
-             for (let j = 0; j < buttons.length; j++) {
-               buttons[j].classList.remove('is-pressed');
-             }
+             buttons.forEach(b => b.classList.remove('is-pressed'));
 
              // 2. Add 'is-pressed' back to the clicked button
-             // (Simplified your if/else chain by just adding it to the current 'btn')
              btn.classList.add('is-pressed');
 
              // 3. Send to logic
