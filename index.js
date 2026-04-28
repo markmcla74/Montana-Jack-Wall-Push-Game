@@ -609,6 +609,7 @@ function drawWinnerPose5(x, y, playerID) {
       loser = null;
       clearInterval(victoryLossScene1);
       clearInterval(victoryLossScene2);
+      updateSuperButtonVisuals();
       document.getElementById("status").innerText = "";
       victoryLossScene1 = null;
       victoryLossScene2 = null;
@@ -680,8 +681,14 @@ function drawWinnerPose5(x, y, playerID) {
         p1Power = 1.5;
         playPushSound();
       } else if (leftChoice === "super" && player1Energy >= 4) {
-        player1Energy -= 4;
-        p1Power = 3;
+        // Check for the "Golden" Threshold before subtracting cost
+        if (player1Energy >= 7) {
+          p1Power = 4.5; // The Overdrive Payload
+        } else {
+          p1Power = 3;   // The Standard Payload
+        }
+
+        player1Energy -= 4; // Cost stays the same
         playHadouken();
       } else {
         // PENALTY: Tried to Move without enough Energy
@@ -700,9 +707,15 @@ function drawWinnerPose5(x, y, playerID) {
         player2Energy -= 1;
         p2Power = 1.5;
         playPushSound();
-      } else if (rightChoice === "super" && player2Energy >= 4) {
-        player2Energy -= 4;
-        p2Power = 3;
+      }else if (rightChoice === "super" && player2Energy >= 4) {
+        // Check for the "Golden" Threshold before subtracting cost
+        if (player2Energy >= 7) {
+          p2Power = 4.5; // The Overdrive Payload
+        } else {
+          p2Power = 3;   // The Standard Payload
+        }
+
+        player2Energy -= 4; // Cost stays the same
         playHadouken();
       } else {
         // PENALTY: Same for Player 2
@@ -722,8 +735,31 @@ function drawWinnerPose5(x, y, playerID) {
       }
 
       checkWinCondition(wallPos);
+      updateSuperButtonVisuals();
     }
-    
+    function updateSuperButtonVisuals() {
+      // --- Handle Player 1 ---
+      const btn1 = document.getElementById("btn-super-p1");
+      if (btn1) {
+        btn1.disabled = (player1Energy < 4);
+        if (player1Energy >= 7) {
+          btn1.classList.add("golden-charge");
+        } else {
+          btn1.classList.remove("golden-charge");
+        }
+      }
+
+      // --- Handle Player 2 ---
+      const btn2 = document.getElementById("btn-super-p2");
+      if (btn2) {
+        btn2.disabled = (player2Energy < 4);
+        if (player2Energy >= 7) {
+          btn2.classList.add("golden-charge");
+        } else {
+          btn2.classList.remove("golden-charge");
+        }
+      }
+    }
     function playHadouken() {
   //const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 

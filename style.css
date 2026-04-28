@@ -242,7 +242,23 @@ justify-content: center;
 .p1-btn { border-color: #ff4d4d; }
 .p2-btn { border-color: #4d94ff; }
 
+/* The base style for the Super Button */
+#btn-super-p1 {
+transition: all 0.3s ease;
+}
 
+.golden-charge {
+  background-color: gold !important;
+  box-shadow: 0 0 20px yellow !important;
+  transform: scale(1.0) !important;
+  border: 2px solid white !important;
+  color: black !important;
+}
+
+@keyframes golden-pulse {
+  from { transform: scale(1); box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); }
+  to { transform: scale(1.08); box-shadow: 0 0 25px rgba(255, 215, 0, 1); }
+}
 
 @media (orientation: portrait) {
   #gameCanvas, #status {
