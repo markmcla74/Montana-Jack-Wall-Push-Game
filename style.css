@@ -17,6 +17,11 @@
       text-align: center;
       font-family: monospace;
       background: #222;
+      /* Add this line */
+      padding-top: 10px;
+
+      /* Add this to make sure the padding doesn't make the screen scrollable */
+      box-sizing: border-box;
     }
     button {
       margin-top: 10px;
