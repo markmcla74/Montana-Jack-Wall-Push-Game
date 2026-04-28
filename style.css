@@ -178,30 +178,26 @@ html, body {
   overflow: hidden;
   background: #000;
 }
+
 #gameContainer {
 display: flex;
 flex-direction: column;
-height: 100dvh;
+height: 100vh; /* Lock to the screen height */
+height: 100dvh; /* The "Dynamic" height that adjusts when bars appear/disappear */
 width: 100vw;
 margin: 0;
-/* Add this: 1vh is about 8-10 pixels on most phones */
-padding-top: 1.5vh;
+padding: 0;
 overflow: hidden;
-box-sizing: border-box; /* IMPORTANT: Keeps padding from making the container taller than 100dvh */
 }
 
 #gameCanvas {
-border: none;
-outline: none;
+border: none;       /* Removes any thin white lines */
+outline: none;      /* Removes the 'focus' ring when you tap it */
 border-bottom: 2px solid #444;
-/* Use auto for horizontal centering, 0 for vertical because
- *    the container's padding-top handles the gap now */
-margin: 0 auto;
-display: block;
+padding: 0;
+margin: 0;
+display: block;     /* Prevents 'inline' spacing at the bottom */
 box-sizing: border-box;
-/* Keep it from getting too tall and pushing the buttons out */
-max-height: 65vh;
-width: auto;
 }
 
 #gameDashboard {
@@ -253,10 +249,7 @@ width: 100%;
   color: white;
   height: 50px;
   cursor: pointer;
-  /*touch-action: manipulation;  Disables the double-tap-to-zoom delay */
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none; /* For the iPhone test */
+  touch-action: manipulation; /* Disables the double-tap-to-zoom delay */
 }
 
 /* Color Coding */
