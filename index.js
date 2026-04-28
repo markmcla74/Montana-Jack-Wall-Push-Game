@@ -682,7 +682,7 @@ function drawWinnerPose5(x, y, playerID) {
         playPushSound();
       } else if (leftChoice === "super" && player1Energy >= 4) {
         // Check for the "Golden" Threshold before subtracting cost
-        if (player1Energy >= 7) {
+        if (player1Energy >= 6) {
           p1Power = 4.5; // The Overdrive Payload
         } else {
           p1Power = 3;   // The Standard Payload
@@ -709,7 +709,7 @@ function drawWinnerPose5(x, y, playerID) {
         playPushSound();
       }else if (rightChoice === "super" && player2Energy >= 4) {
         // Check for the "Golden" Threshold before subtracting cost
-        if (player2Energy >= 7) {
+        if (player2Energy >= 6) {
           p2Power = 4.5; // The Overdrive Payload
         } else {
           p2Power = 3;   // The Standard Payload
@@ -737,29 +737,40 @@ function drawWinnerPose5(x, y, playerID) {
       checkWinCondition(wallPos);
       updateSuperButtonVisuals();
     }
-    function updateSuperButtonVisuals() {
-      // --- Handle Player 1 ---
-      const btn1 = document.getElementById("btn-super-p1");
-      if (btn1) {
-        btn1.disabled = (player1Energy < 4);
-        if (player1Energy >= 7) {
-          btn1.classList.add("golden-charge");
-        } else {
-          btn1.classList.remove("golden-charge");
-        }
-      }
 
-      // --- Handle Player 2 ---
-      const btn2 = document.getElementById("btn-super-p2");
-      if (btn2) {
-        btn2.disabled = (player2Energy < 4);
-        if (player2Energy >= 7) {
-          btn2.classList.add("golden-charge");
-        } else {
-          btn2.classList.remove("golden-charge");
-        }
-      }
-    }
+   function updateSuperButtonVisuals() {
+     const btn1 = document.getElementById("btn-super-p1");
+     const btn2 = document.getElementById("btn-super-p2");
+
+     // Player 1 Visuals
+     if (btn1) {
+       btn1.disabled = false; // Always clickable!
+       if (player1Energy >= 6) {
+         btn1.classList.add("golden-charge");
+         btn1.classList.remove("silver-charge");
+       } else if (player1Energy >= 4) {
+         btn1.classList.remove("golden-charge");
+         btn1.classList.add("silver-charge");
+       } else {
+         btn1.classList.remove("golden-charge", "silver-charge");
+       }
+     }
+
+     // Player 2 Visuals
+     if (btn2) {
+       btn2.disabled = false; // Always clickable!
+       if (player2Energy >= 6) {
+         btn2.classList.add("golden-charge");
+         btn2.classList.remove("silver-charge");
+       } else if (player2Energy >= 4) {
+         btn2.classList.remove("golden-charge");
+         btn2.classList.add("silver-charge");
+       } else {
+         btn2.classList.remove("golden-charge", "silver-charge");
+       }
+     }
+   }
+
     function playHadouken() {
   //const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -1185,17 +1196,18 @@ async function startGame(withEnergy) {
          // Saving phase
          action = rand < 0.75 ? "rest" : "push";
        }
-       else if (e >= 4 && e <= 7) {
+       else if (e >= 4 && e <= 5) {
          // Tier 2: Increased Aggression
          // 70% Super Push, 20% Push, 10% Rest
-         if (rand < 0.7) action = "super";
-         else if (rand < 0.9) action = "push";
+         if (rand < 0.2) action = "super";
+         else if (rand < 0.5) action = "push";
          else action = "rest";
        }
-       else if (e >= 8) {
+       else if (e >= 6) {
          // Tier 3: Pure Panic Mode for the player
          // 90% chance to Super Push if they have 2+ in the bank
-         action = rand < 0.9 ? "super" : "push";
+         //action = rand < 0.9 ? "super" : "push";
+         action = "super";
        }
 
        // 2. VISUAL FEEDBACK
@@ -1210,3 +1222,4 @@ async function startGame(withEnergy) {
        console.log(`CPU Energy: ${e} | Action: ${action}`);
        handleInput('right', action);
      }
+

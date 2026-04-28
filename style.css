@@ -227,15 +227,42 @@ display: flex;
 align-items: center;
 justify-content: center;
 }
+
+#controls-row {
+display: flex;
+justify-content: center;
+gap: 10px;
+width: 100%;
+
+}
+.player-cluster {
+  display: flex;
+  gap: 4px; /* Space between individual buttons */
+  flex: 1;  /* Each group takes half the screen */
+}
 .game-btn {
-  flex: 1;           /* Each button shares the 45% height equally */
-  margin: 0;         /* No extra vertical margins */
+  flex: 1;
+  border-radius: 5px;
   font-weight: bold;
-  font-size: 13px;   /* Slightly smaller font to ensure text fits */
-  border-radius: 6px;
-  border: 3px solid;
+  font-size: 11px;
+  border: 1px solid #444;
+  color: white;
+  height: 50px;
   cursor: pointer;
   touch-action: manipulation; /* Disables the double-tap-to-zoom delay */
+}
+
+/* Color Coding */
+.btn-rest { background-color: #28a745; }   /* Green +2 */
+.btn-push { background-color: #3498db; }   /* Light Blue -1 */
+.btn-super { background-color: #c0c0c0; color: #333; } /* Silver -4 */
+
+/* The Golden State (Override silver) */
+.golden-charge {
+  background: linear-gradient(45deg, #ffd700, #fff5b1) !important;
+  color: #5c4b00 !important;
+  border: 2px solid white !important;
+  box-shadow: 0 0 10px gold;
 }
 
 /* Color Coding */
@@ -247,13 +274,7 @@ justify-content: center;
 transition: all 0.3s ease;
 }
 
-.golden-charge {
-  background-color: gold !important;
-  box-shadow: 0 0 20px yellow !important;
-  transform: scale(1.0) !important;
-  border: 2px solid white !important;
-  color: black !important;
-}
+
 
 @keyframes golden-pulse {
   from { transform: scale(1); box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); }
