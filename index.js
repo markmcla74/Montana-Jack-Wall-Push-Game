@@ -14,6 +14,44 @@
     const showBtn = document.getElementById("showEnergyBtn");
     const hideBtn = document.getElementById("hideEnergyBtn");
     const startBtn = document.getElementById("startGameBtn");
+    const cpuBrain = {
+      //The Rows (CPU Energy)
+      //The Cols (Player 1 energy)
+      //The entries are probabilities, for example 059400
+      //means 5% chance rest (digits 1 and 2), 94% chance push (digits 3 and 4), (digits 5 and 6) otherwise = super push
+      //In this case, otherwise = 1%. Digits 5 and 6 are really "dead code", whose purpose is just to make the 100%
+      //clear. Also, we are not using 100%, and instead using 99% to avoid the complication of adding an extra digit into the table.
+      posPlus1: [
+        // P1 Energy: 0, 1, 2, 3, 4, 5, 6+
+        [990000, 990000, 990000, 990000, 990000, 990000, 990000], // CPU Energy 0
+        [504900, 405900, 306900, 207900, 108900, 059400, 019800], // CPU Energy 1
+        [108900, 108900, 108900, 059400, 059400, 019800, 019800], // CPU Energy 2
+        [108900, 108900, 059400, 059400, 059400, 019800, 019800], // CPU Energy 3
+        [050589, 050589, 050589, 050589, 050589, 010197, 010197], // CPU Energy 4
+        [010197, 010197, 010197, 010197, 010197, 010197, 010197], // CPU Energy 5
+        [000099, 000099, 000099, 000099, 000099, 000099, 000099]  // CPU Energy 6+
+      ],
+      posZero: [
+        // P1 Energy: 0, 1, 2, 3, 4, 5, 6+
+        [990000, 990000, 990000, 990000, 990000, 990000, 990000], // CPU Energy 0
+        [504900, 405900, 306900, 207900, 108900, 059400, 019800], // CPU Energy 1
+        [108900, 108900, 108900, 059400, 059400, 019800, 019800], // CPU Energy 2
+        [108900, 108900, 059400, 059400, 059400, 019800, 019800], // CPU Energy 3
+        [050589, 050589, 050589, 050589, 050589, 010197, 010197], // CPU Energy 4
+        [010197, 010197, 010197, 010197, 010197, 010197, 010197], // CPU Energy 5
+        [000099, 000099, 000099, 000099, 000099, 000099, 000099]  // CPU Energy 6+
+      ],
+      posMinus1: [
+        // P1 Energy: 0, 1, 2, 3, 4, 5, 6+
+        [990000, 990000, 990000, 990000, 990000, 990000, 990000], // CPU Energy 0
+        [504900, 405900, 306900, 207900, 108900, 059400, 019800], // CPU Energy 1
+        [108900, 108900, 108900, 059400, 059400, 019800, 019800], // CPU Energy 2
+        [108900, 108900, 059400, 059400, 059400, 019800, 019800], // CPU Energy 3
+        [050589, 050589, 050589, 050589, 050589, 010197, 010197], // CPU Energy 4
+        [010197, 010197, 010197, 010197, 010197, 010197, 010197], // CPU Energy 5
+        [000099, 000099, 000099, 000099, 000099, 000099, 000099]  // CPU Energy 6+
+      ]
+    };
 
     // Game State
     let player1Energy = 2;
@@ -733,7 +771,9 @@ function drawWinnerPose5(x, y, playerID) {
         else if (targetPos > (canvas.width - crushDistance)) wallPos = canvas.width - 0.9 * crushDistance;
         else wallPos = targetPos;
       }
-
+      //console.log("wallPos",wallPos);
+      //console.log("wallWidth",wallWidth);
+      //console.log("middle", canvas.width/2);
       checkWinCondition(wallPos);
       updateSuperButtonVisuals();
     }
@@ -1184,31 +1224,7 @@ async function startGame(withEnergy) {
      function makeCPUMove() {
        if (gameOver || isProcessing) return;
 
-       let action = "";
-       const e = player2Energy;
-       const rand = Math.random();
-
-       // 1. ENERGY-BASED BRAIN
-       if (e === 0) {
-         action = "rest";
-       }
-       else if (e >= 1 && e <= 3) {
-         // Saving phase
-         action = rand < 0.75 ? "rest" : "push";
-       }
-       else if (e >= 4 && e <= 5) {
-         // Tier 2: Increased Aggression
-         // 70% Super Push, 20% Push, 10% Rest
-         if (rand < 0.2) action = "super";
-         else if (rand < 0.5) action = "push";
-         else action = "rest";
-       }
-       else if (e >= 6) {
-         // Tier 3: Pure Panic Mode for the player
-         // 90% chance to Super Push if they have 2+ in the bank
-         //action = rand < 0.9 ? "super" : "push";
-         action = "super";
-       }
+       action = getActionFromEncoded();
 
        // 2. VISUAL FEEDBACK
        const cpuButtons = document.querySelectorAll('#controlsP2 .game-btn');
@@ -1219,7 +1235,43 @@ async function startGame(withEnergy) {
        if (action === "rest") cpuButtons[2].classList.add('is-pressed');
 
        // 3. EXECUTE
-       console.log(`CPU Energy: ${e} | Action: ${action}`);
+       //console.log(`CPU Energy: ${e} | Action: ${action}`);
        handleInput('right', action);
+     }
+
+     function getActionFromEncoded() {
+       // Ensure we have a 6-digit string (e.g., 51085 becomes "051085")
+       let table;
+       let error = wallWidth;
+       let middle = canvas.width/2;
+
+
+       if ((wallPos - error) > middle){
+         table = cpuBrain.posPlus1;
+       } else if ((wallPos + error) < middle){
+         table = cpuBrain.posMinus1;
+       }else table = cpuBrain.posZero;
+
+       // 2. Cap the energy to index 0-6
+       const xIdx = Math.min(player2Energy, 6); //cpu is player 2
+       const yIdx = Math.min(player1Energy, 6);
+
+       // 3. Grab the encoded number
+       const encoded = table[xIdx][yIdx];
+       const s = encoded.toString().padStart(6, '0');
+
+       const rLimit = parseInt(s.substring(0, 2)); // First two digits
+       const pLimit = parseInt(s.substring(2, 4)); // Middle two digits
+       // The rest is Super Push
+
+       const roll = Math.random() * 100;
+
+       if (roll < rLimit) {
+         return "rest";
+       } else if (roll < (rLimit + pLimit)) {
+         return "push";
+       } else {
+         return "super";
+       }
      }
 
