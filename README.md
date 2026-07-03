@@ -1,3 +1,6 @@
+<p align="center">
+  <img src="featureImage.png" alt="App Feature Image" width="600">
+</p>
 The goal of this video game is to "crush" your opponent. There is a wall separating two players. Each player may choose, rest, push, or super push. (There is also a Golden Super Push when players accumlate 6 or more energy units.) When the wall "crushes" one of the players, the other player wins. I hope you enjoy this game! https://markmcla74.github.io/Montana-Jack-Wall-Push-Game/
 
 "Montana Jack Wall Push Game" can feel exactly like a native App Store download using a built-in mobile feature called "Add to Home Screen." It places a dedicated game icon right on your phone's home screen for instant access!
