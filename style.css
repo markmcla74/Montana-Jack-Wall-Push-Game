@@ -52,46 +52,45 @@
 
 
 
-#startOverlay {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-/* Changed from 0.9 to 0.6 for more transparency */
-background: rgba(0, 0, 0, 0);
+   #startOverlay {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: rgba(0, 0, 0, 0);
+
+   display: flex;
+   justify-content: center;
+   /* Shifted from center to align higher up with the HUD/Energy text */
+   align-items: flex-start;
+   padding-top: 5vh; /* Adjust this percentage up or down to precisely match your target level */
+   z-index: 100;
+   }
 
 
-display: flex;
-justify-content: center;
-align-items: center;
-z-index: 100;
-}
+   #menuContainer {
+   width: 75%;
+   max-width: 275px;
+   background: rgba(143, 188, 143, 0.9);
 
+   /* TIGHTENED FOR MOBILE LANDSCAPE */
+   padding: 10px 20px;
+   margin: 0; /* Removed auto margin so padding-top controls the vertical position */
 
+   border-radius: 15px;
+   border: 3px solid #8fbc8f;
+   color: black;
+   box-shadow: 0 0 20px rgba(0,0,0,0.5);
 
-#menuContainer {
-width: 75%;
-max-width: 275px;
-background: rgba(143, 188, 143, 0.9);
+   /* SAFETY MEASURE */
+   max-height: 90vh;
+   overflow-y: auto;
 
-/* TIGHTENED FOR MOBILE LANDSCAPE */
-padding: 10px 20px;
-margin: auto;
-
-border-radius: 15px;
-border: 3px solid #8fbc8f;
-color: black;
-box-shadow: 0 0 20px rgba(0,0,0,0.5);
-
-/* SAFETY MEASURE */
-max-height: 90vh;
-overflow-y: auto;
-
-/* RESCALE TO 75% */
-transform: scale(0.75);
-transform-origin: center center;
-}
+   /* RESCALE TO 75% */
+   transform: scale(0.75);
+   transform-origin: top center; /* Scales from the top so it doesn't drift downward */
+   }
 
 #menuContainer h1 {
 font-size: 1.3rem; /* Reduced from default size */
